@@ -1,0 +1,78 @@
+body {
+    background-image: url('images/fondo.jpg');
+    margin: 0; /* Elimina el margen por defecto del body */
+    padding: 0;
+    height: 100vh; /* Altura total de la ventana */
+    background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    opacity: 20; /* Opacidad del fondo */
+}
+
+.navbar {
+    width: 100%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+  }
+  
+  .nav-links li {
+    margin-left: 30px;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+  }
+  
+  .nav-links a:hover {
+    color: rgb(177, 166, 9); /* Color al hacer hover */
+  }
+  
+.overplay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Negro con opacidad del 50% */
+    z-index: 1;
+}
+
+.contenido{
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding-top: 200px;
+}
+
+.login{
+    padding: 15px 30px;
+    background-color: transparent;
+    color: white;
+    border-color: rgb(177, 166, 9);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login:hover{
+    background-color: rgb(177, 166, 9);
+    border-color: white;
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="inicio.css">
+    <title>EmotiSense - Login / Sign Up</title>
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#" onclick="showLogin()">Log In</a></li>
+            <li><a href="#" onclick="showSignUp()">Sign Up</a></li>
+            <li><a href="about.html">About Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="contenido">
+        <h1>EmotiSense</h1>
+        <p>Una imagen dice más que mil palabras.</p>
+
+        <!-- Formulario de Login -->
+        <div id="loginSection">
+            <h2>Iniciar Sesión</h2>
+            <input type="email" id="loginEmail" class="form-control" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" class="form-control mt-2" placeholder="Contraseña">
+            <button onclick="login()" class="btn btn-primary mt-2">Iniciar sesión</button>
+            <p><a href="#" onclick="showSignUp()">¿No tienes cuenta? Regístrate aquí</a></p>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div id="signUpSection" style="display:none;">
+            <h2>Crear Cuenta</h2>
+            <input type="email" id="signUpEmail" class="form-control" placeholder="Correo electrónico">
+            <input type="password" id="signUpPassword" class="form-control mt-2" placeholder="Contraseña">
+            <button onclick="signUp()" class="btn btn-success mt-2">Crear cuenta</button>
+            <p><a href="#" onclick="showLogin()">¿Ya tienes cuenta? Inicia sesión aquí</a></p>
+        </div>
+
+        <!-- Mensaje de estado -->
+        <p id="message" class="mt-3"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCizcDrDqa95tU_fyYy9fGWf-2qCaTWSnA",
+            authDomain: "emotion-app-87070.firebaseapp.com",
+            projectId: "emotion-app-87070",
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Función de login
+        function login() {
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(async (userCredential) => {
+                    const user = userCredential.user;
+                    const token = await user.getIdToken();
+
+                    console.log("Token:", token);
+
+                    // Enviar el token al backend
+                    fetch("http://localhost:3000/protected", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error('Error en la respuesta del servidor');
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        document.getElementById("message").innerText = "Login exitoso!";
+                        console.log("Respuesta del backend:", data);
+                        // Verifica que la redirección se esté ejecutando
+                        console.log("Redirigiendo a Home.html...");
+                        window.location.href = "Home.html";
+                    })
+                    .catch(err => {
+                        console.error("Error:", err);
+                        document.getElementById("message").innerText = "Error en la comunicación con el backend: " + err.message;
+                    });
+                })
+                .catch(error => {
+                    document.getElementById("message").innerText = "Error en login: " + error.message;
+                });
+        }
+
+        // Función de registro (Sign Up)
+        function signUp() {
+            const email = document.getElementById("signUpEmail").value;
+            const password = document.getElementById("signUpPassword").value;
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    document.getElementById("message").innerText = "Usuario creado con éxito!";
+
+                    // Redirigir al login después del registro
+                    showLogin();
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    document.getElementById("message").innerText = "Error en el registro: " + errorMessage;
+                });
+        }
+
+        // Función para mostrar la sección de Login
+        function showLogin() {
+            document.getElementById("loginSection").style.display = "block";
+            document.getElementById("signUpSection").style.display = "none";
+        }
+
+        // Función para mostrar la sección de Registro
+        function showSignUp() {
+            document.getElementById("signUpSection").style.display = "block";
+            document.getElementById("loginSection").style.display = "none";
+        }
+    </script>
+</body>
+</html>
